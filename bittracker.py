@@ -11,14 +11,13 @@ hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML,
 session_high = 0.0
 session_low = 0.0
 startSession = False
-count = 10 
+count = 0 
 
 
 # Get values from parsed data
 def getBitValue(soup, startSession, session_low, session_high, count):
 	# get data div for BitCoin Value
 	div = soup.find(name="div",attrs = {'class':'bpi-value bpiUSD'}).text
-	#print div
 	# get %change
 	change_down = soup.find(name="div", attrs = {'class':'bpi-change changeUSD data-down'})
 	change_up = soup.find(name="div", attrs = {'class':'bpi-change changeUSD data-up'})
@@ -27,10 +26,6 @@ def getBitValue(soup, startSession, session_low, session_high, count):
 		change = "-"+change_down.text
 	elif change_up is not None:
 		change = "+"+change_up.text
-	#print change
-	print "Current Valuation: ",div," ",change
-	print "Count:",count
-	print startSession
 	if startSession is False:
 		session_low = div
 		session_high = div
@@ -41,10 +36,10 @@ def getBitValue(soup, startSession, session_low, session_high, count):
 		else:
 			session_low =div
 			notify("Session low! Buy now!", session_low+" "+change)
-		count = count + 10	
+		count = count + 60	
 	startSession = True;
-	if count % 20 == 0:
-		print "notify called"
+	if count >= 600 and count % 60 == 0:
+		print "Current Valuation: ",div," ",change
 		notify("Current Valuation ", div+" "+change)
 	threading.Timer(count, pingForData,[url, hdr, True]).start()
 
