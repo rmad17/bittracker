@@ -1,3 +1,5 @@
+import sys
+import pynotify
 import urllib2
 from bs4 import BeautifulSoup
 
@@ -9,10 +11,17 @@ soup = BeautifulSoup(urllib2.urlopen(req))
 def getBitValue(soup):
 	# get data div for BitCoin Value
 	div = soup.find(name="div",attrs = {'class':'bpi-value bpiUSD'}).text
-	print "CurrentValuation: ",div
+	data= "CurrentValuation: "+div
+	print data
+	notify(div)
+	#notify-send data
 	# get down change div
 	down_div = soup.find(name="div", attrs={'class': 'percent data-down'})
 	print "-",down_div,"%"
 
+def notify(div):
+	pynotify.init("Get Bitcoins")
+	notif = pynotify.Notification ("Current Valuation ",div)
+	notif.show()
 getBitValue(soup)
 	
